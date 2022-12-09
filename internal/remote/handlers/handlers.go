@@ -8,7 +8,7 @@ import (
 )
 
 type TaskService interface {
-	CreateTask(entity domain.TaskEntity)
+	CreateTask(te domain.TaskEntity)
 }
 
 type TaskHandler struct {

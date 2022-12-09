@@ -1,8 +1,12 @@
 package service
 
-import "github.com/allensuvorov/tasker/internal/domain"
+import (
+	"github.com/allensuvorov/tasker/internal/domain"
+	"log"
+)
 
 type TaskStorage interface {
+	CreateTask(te domain.TaskEntity) error
 }
 
 type TaskService struct {
@@ -15,6 +19,13 @@ func NewTaskService(taskStorage TaskStorage) TaskService {
 	}
 }
 
-func (taskService TaskService) CreateTask(entity domain.TaskEntity) {
+func (taskService TaskService) CreateTask(te domain.TaskEntity) {
+	log.Println("Service CreateTask - hello")
 
+	err := taskService.taskStorage.CreateTask(te)
+	if err != nil {
+		log.Println(err)
+	}
+
+	log.Println("Service CreateTask - bye")
 }
