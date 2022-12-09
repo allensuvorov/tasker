@@ -3,9 +3,12 @@ package handlers
 import (
 	"log"
 	"net/http"
+
+	"github.com/allensuvorov/tasker/internal/domain"
 )
 
 type TaskService interface {
+	CreateTask(entity domain.TaskEntity)
 }
 
 type TaskHandler struct {
@@ -20,6 +23,13 @@ func NewTaskHandler(ts TaskService) TaskHandler {
 
 func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler CreateTask - hello")
+
+	// TODO: gen ID
+	// TODO: decode JSON body to struct
+	// TODO: return JSON with ID and http status 200
+
+	th.taskService.CreateTask(domain.TaskEntity{})
+
 	log.Println("Handler CreateTask - bye")
 }
 

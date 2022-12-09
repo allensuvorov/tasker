@@ -1,5 +1,7 @@
 package service
 
+import "github.com/allensuvorov/tasker/internal/domain"
+
 type TaskStorage interface {
 }
 
@@ -11,4 +13,8 @@ func NewTaskService(taskStorage TaskStorage) TaskService {
 	return TaskService{
 		taskStorage: taskStorage,
 	}
+}
+
+func (taskService TaskService) CreateTask(entity domain.TaskEntity) {
+
 }
