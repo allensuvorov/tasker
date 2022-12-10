@@ -7,6 +7,7 @@ import (
 
 type TaskStorage interface {
 	CreateTask(te domain.TaskEntity) error
+	GetTaskStatus(taskID string) domain.ResultEntity
 }
 
 type TaskService struct {
@@ -32,16 +33,22 @@ func (taskService TaskService) CreateTask(te domain.TaskEntity) {
 	log.Println("Service CreateTask - bye")
 }
 
-// TODO: task scheduler with goroutines
-
 func schedule(taskID string) {
-	// TODO: go func(){}() that assigns task to agent
+	// TODO: task scheduler with goroutines
+	// TODO: go func(){}() that assigns task to agent - taskAgent(taskID)
 }
 
-/*
-TODO taskAgent(){
-	receive taskID from <-ch
-	do the task - send request to 3rd party
-	update status of task in DB
+func taskAgent(taskID string) {
+	// TODO:
+	//receive taskID from <-ch
+	//do the task - send request to 3rd party
+	//update status of task in DB
 }
-*/
+
+func (taskService TaskService) GetTaskStatus(taskID string) domain.ResultEntity {
+	log.Println("Service GetTaskStatus - hello")
+
+	log.Println("Service GetTaskStatus - bye")
+
+	return taskService.taskStorage.GetTaskStatus(taskID)
+}

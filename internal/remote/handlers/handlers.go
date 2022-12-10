@@ -9,6 +9,7 @@ import (
 
 type TaskService interface {
 	CreateTask(te domain.TaskEntity)
+	GetTaskStatus(id string) domain.ResultEntity
 }
 
 type TaskHandler struct {
@@ -33,6 +34,6 @@ func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler CreateTask - bye")
 }
 
-func (th TaskHandler) GetStatus(w http.ResponseWriter, r *http.Request) {
-
+func (th TaskHandler) GetTaskStatus(w http.ResponseWriter, r *http.Request) {
+	//th.taskService.GetTaskStatus(taskID)
 }

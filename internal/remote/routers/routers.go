@@ -11,6 +11,6 @@ func NewRouter(task handlers.TaskHandler) chi.Router {
 	r := chi.NewRouter()
 
 	r.Post("/task", task.CreateTask)
-	r.Get("/task/{taskID}", task.GetStatus)
+	r.Get("/task/{taskID}", task.GetTaskStatus)
 	return r
 }
