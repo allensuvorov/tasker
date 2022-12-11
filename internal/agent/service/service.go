@@ -1,26 +1,36 @@
 package service
 
 import (
-	"github.com/allensuvorov/tasker/cmd/agent"
 	"github.com/allensuvorov/tasker/internal/server/domain"
+	"time"
 )
 
-type Service struct {
-	as agent.Storage
-	ar agent.Request
+type Storage interface {
+	GetNewTasks() []domain.TaskEntity
+	BulkUpdateTaskStatuses(map[string]int)
+	BulkCreateTaskResults(results []domain.ResultEntity)
 }
 
-func NewService(as agent.Storage, ar agent.Request) Service {
+type Request interface {
+	Request(domain.TaskEntity) domain.ResultEntity
+}
+
+type Service struct {
+	storage Storage
+	request Request
+}
+
+func NewService(s Storage, r Request) Service {
 	return Service{
-		as: as,
-		ar: ar,
+		storage: s,
+		request: r,
 	}
 }
 
-func GetNewTasks() []domain.TaskEntity {
+func (s Service) GetNewTasks(timeInterval time.Duration) []domain.TaskEntity {
 	return []domain.TaskEntity{}
 }
-func DoTasks([]domain.TaskEntity) []domain.ResultEntity {
+func (s Service) DoTasks([]domain.TaskEntity) []domain.ResultEntity {
 	return []domain.ResultEntity{}
 }
-func BulkCreateTaskResults(results []domain.ResultEntity) {}
+func (s Service) BulkCreateTaskResults(results []domain.ResultEntity) {}
