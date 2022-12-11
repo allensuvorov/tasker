@@ -1,9 +1,8 @@
 package routers
 
 import (
+	"github.com/allensuvorov/tasker/internal/server/remote/handlers"
 	"github.com/go-chi/chi/v5"
-
-	"github.com/allensuvorov/tasker/internal/remote/handlers"
 )
 
 func NewRouter(task handlers.TaskHandler) chi.Router {

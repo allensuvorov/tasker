@@ -2,9 +2,8 @@ package storage
 
 import (
 	"database/sql"
+	"github.com/allensuvorov/tasker/internal/server/domain"
 	"log"
-
-	"github.com/allensuvorov/tasker/internal/domain"
 )
 
 type TaskStorage struct {

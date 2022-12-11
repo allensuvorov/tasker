@@ -1,11 +1,11 @@
-package scheduler
+package agent
 
 import (
-	"github.com/allensuvorov/tasker/internal/domain"
+	"github.com/allensuvorov/tasker/internal/server/domain"
 )
 
 func schedule(taskID string) {
-	// TODO: task scheduler with goroutines
+	// TODO: task agent with goroutines
 	// TODO: go func(){}() that assigns task to agent - taskAgent(taskID)
 }
 
@@ -16,19 +16,13 @@ func taskAgent(taskID string) {
 	//update status of task in DB
 }
 
-type DoService interface {
-	GetNewTasks() []domain.TaskEntity
-	ScheduleTasks([]domain.TaskEntity) []domain.ResultEntity
-	BulkCreateTaskResults(results []domain.ResultEntity)
-}
-
-type DoStorage interface {
+type Storage interface {
 	GetNewTasks() []domain.TaskEntity
 	BulkUpdateTaskStatuses(map[string]int)
 	BulkCreateTaskResults(results []domain.ResultEntity)
 }
 
-type DoRequest interface {
+type Request interface {
 	Request(domain.TaskEntity) domain.ResultEntity
 }
 
@@ -38,9 +32,9 @@ func main() {
 	// TODO: update DB
 	// TODO: add layers for - storage, service, remote
 
-	//DoStorage := NewDoStorage()
+	//Storage := NewDoStorage()
 	//DoRemote := NewDoRemote()
-	//DoService := NewDoService(DoRemote, DoStorage)
+	//Service := NewDoService(DoRemote, Storage)
 	//reCheckTime := 500*time.Millisecond
-	//DoService.doStorage.GetNewTasks(reCheckTime)
+	//Service.doStorage.GetNewTasks(reCheckTime)
 }

@@ -1,10 +1,9 @@
 package handlers
 
 import (
+	"github.com/allensuvorov/tasker/internal/server/domain"
 	"log"
 	"net/http"
-
-	"github.com/allensuvorov/tasker/internal/domain"
 )
 
 type TaskService interface {
