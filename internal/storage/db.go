@@ -12,11 +12,12 @@ type TaskStorage struct {
 }
 
 func NewTaskStorage() *TaskStorage {
-	db, err := sql.Open("pgx",
-		"postgres://postgres:sql@localhost:5432/postgres")
-	if err != nil {
-		panic(err)
-	}
+	//db, err := sql.Open("pgx",
+	//	"postgres://postgres:sql@localhost:5432/postgres")
+	//if err != nil {
+	//	panic(err)
+	//}
+
 	//
 	//_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(
 	//ID SERIAL PRIMARY KEY,
@@ -30,7 +31,7 @@ func NewTaskStorage() *TaskStorage {
 	//}
 
 	return &TaskStorage{
-		DB: db,
+		//DB: db,
 	}
 }
 
