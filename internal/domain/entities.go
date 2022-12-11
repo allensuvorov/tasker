@@ -5,13 +5,13 @@ type TaskEntity struct {
 	Method       string
 	URL          string
 	Headers      map[string]string
+	Status       string
 	ResultEntity int
 }
 
 type ResultEntity struct {
-	ID             string
-	Status         string
-	HttpStatusCode string
-	Headers        map[string]string
-	Length         int
+	ID                     string
+	ResponseHttpStatusCode string
+	ResponseHeaders        map[string]string
+	ResponseBodyLength     int
 }
