@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -58,10 +59,30 @@ func (ts TaskStorage) CreateTask(te domain.TaskEntity) error {
 	return nil
 }
 
-func (ts TaskStorage) GetTaskStatus(taskID string) domain.ResultEntity {
+func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) {
 	log.Println("Storage GetTaskStatus - hello")
+
+	// TODO - scan json to map (result_headers)
+
+	row := ts.DB.QueryRow(
+		`SELECT 
+    	task_status, 
+       	result_http_status_code, 
+       	result_headers,
+       	result_body_length, 
+		FROM tasks WHERE task_id = $1;`,
+		taskID)
+
+	re := domain.ResultEntity{}
+	err := row.Scan(&re)
+	if err == sql.ErrNoRows {
+		log.Println("Storage GetTaskStatus, record not found")
+		return domain.ResultEntity{}, errors.New("Resource was not found")
+	}
+
+	re.ID = taskID
 
 	log.Println("Storage GetTaskStatus - bye")
 
-	return domain.ResultEntity{}
+	return re, nil
 }

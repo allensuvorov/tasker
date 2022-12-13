@@ -8,7 +8,7 @@ import (
 
 type TaskStorage interface {
 	CreateTask(te domain.TaskEntity) error
-	GetTaskStatus(taskID string) domain.ResultEntity
+	GetTaskStatus(taskID string) (domain.ResultEntity, error)
 }
 
 type TaskService struct {
@@ -37,5 +37,9 @@ func (taskService TaskService) GetTaskStatus(taskID string) domain.ResultEntity 
 
 	log.Println("Service GetTaskStatus - bye")
 
-	return taskService.taskStorage.GetTaskStatus(taskID)
+	re, err := taskService.taskStorage.GetTaskStatus(taskID)
+	if err != nil {
+		log.Println(err)
+	}
+	return re
 }
