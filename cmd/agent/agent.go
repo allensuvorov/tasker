@@ -1,0 +1,17 @@
+package agent
+
+import (
+	"time"
+
+	"github.com/allensuvorov/tasker/internal/agent/remote"
+	"github.com/allensuvorov/tasker/internal/agent/service"
+	"github.com/allensuvorov/tasker/internal/agent/storage"
+)
+
+func main() {
+	Storage := storage.NewStorage()
+	Request := remote.NewRequest()
+	Service := service.NewService(Storage, Request)
+	newTaskCheckInterval := 500 * time.Millisecond
+	Service.GetNewTasks(newTaskCheckInterval)
+}
