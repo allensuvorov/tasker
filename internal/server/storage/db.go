@@ -20,17 +20,17 @@ func NewTaskStorage() *TaskStorage {
 		panic(err)
 	}
 
-	//
-	//_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(
-	//ID SERIAL PRIMARY KEY,
-	//method TEXT,
-	//hash TEXT,
-	//client TEXT,
-	//deleted BOOL DEFAULT 'false'
-	//                          );`)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(
+	ID SERIAL PRIMARY KEY,
+	task_id TEXT,
+	request_method TEXT,
+	url TEXT,
+	headers JSON,
+	status TEXT
+	                         );`)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	return &TaskStorage{
 		DB: db,
