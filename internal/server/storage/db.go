@@ -40,15 +40,25 @@ func NewTaskStorage() *TaskStorage {
 	}
 }
 
-func (taskStorage TaskStorage) CreateTask(entity domain.TaskEntity) error {
+func (ts TaskStorage) CreateTask(te domain.TaskEntity) error {
 	log.Println("Storage CreateTask - hello")
 
+	_, err := ts.DB.Exec(
+		`INSERT INTO tasks
+		(task_id , task_request_method , task_url, task_headers)
+		VALUES
+		($1, $2, $3, $4);`,
+		te.ID, te.Method, te.URL, te.Headers,
+	)
+	if err != nil {
+		log.Fatal(err)
+	}
 	log.Println("Storage CreateTask - bye")
 
 	return nil
 }
 
-func (taskStorage TaskStorage) GetTaskStatus(taskID string) domain.ResultEntity {
+func (ts TaskStorage) GetTaskStatus(taskID string) domain.ResultEntity {
 	log.Println("Storage GetTaskStatus - hello")
 
 	log.Println("Storage GetTaskStatus - bye")
