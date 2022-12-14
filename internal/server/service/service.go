@@ -35,11 +35,11 @@ func (taskService TaskService) CreateTask(te domain.TaskEntity) {
 func (taskService TaskService) GetTaskStatus(taskID string) domain.ResultEntity {
 	log.Println("Service GetTaskStatus - hello")
 
-	log.Println("Service GetTaskStatus - bye")
-
 	re, err := taskService.taskStorage.GetTaskStatus(taskID)
 	if err != nil {
 		log.Println(err)
 	}
+
+	log.Println("Service GetTaskStatus - bye")
 	return re
 }

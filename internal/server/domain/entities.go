@@ -1,11 +1,10 @@
 package domain
 
 type TaskEntity struct {
-	ID           string
-	Method       string
-	URL          string
-	Headers      map[string]string
-	ResultEntity int
+	ID      string
+	Method  string
+	URL     string
+	Headers map[string]string
 }
 
 type ResultEntity struct {
