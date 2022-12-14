@@ -1,9 +1,10 @@
 package storage
 
 import (
-	"github.com/allensuvorov/tasker/internal/server/domain"
 	"net/http"
 	"testing"
+
+	"github.com/allensuvorov/tasker/internal/server/domain"
 )
 
 //func TestNewTaskStorage(t *testing.T) {
@@ -24,8 +25,7 @@ import (
 
 // TODO: create Test with mock database
 
-// TODO: create Test with the actual database
-func TestTaskStorage_CreateTask(t *testing.T) {
+func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 
 	ts := NewTaskStorage()
 
@@ -40,14 +40,14 @@ func TestTaskStorage_CreateTask(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{
-			name:   "create",
+			name:   "created",
 			fields: ts,
 			args: args{
 				te: domain.TaskEntity{
-					ID:      "abc",
+					ID:      "abcde",
 					Method:  http.MethodGet,
 					URL:     "http://google.com",
-					Headers: map[string]string{"Authentication": "Basic bG9naW46cGFzc3dvcmQ="},
+					Headers: map[string]string{"Authentication": "Basic bG9naW46cGFzc3dvcmQ=", "Content-type": "JSON"},
 				},
 			},
 			wantErr: false,

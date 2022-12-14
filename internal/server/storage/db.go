@@ -45,10 +45,8 @@ func (ts TaskStorage) CreateTask(te domain.TaskEntity) error {
 	log.Println("Storage CreateTask - hello")
 
 	_, err := ts.DB.Exec(
-		`INSERT INTO tasks
-		(task_id , task_request_method , task_url, task_headers)
-		VALUES
-		($1, $2, $3, $4);`,
+		`INSERT INTO tasks (task_id , task_request_method , task_url, task_headers)
+		VALUES ($1, $2, $3, $4);`,
 		te.ID, te.Method, te.URL, te.Headers,
 	)
 	if err != nil {
