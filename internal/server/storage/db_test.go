@@ -1,7 +1,9 @@
 package storage
 
 import (
+	"log"
 	"net/http"
+	"reflect"
 	"testing"
 
 	"github.com/allensuvorov/tasker/internal/server/domain"
@@ -47,7 +49,7 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 					ID:      "abcde",
 					Method:  http.MethodGet,
 					URL:     "http://google.com",
-					Headers: map[string]string{"Authentication": "Basic bG9naW46cGFzc3dvcmQ=", "Content-type": "JSON"},
+					Headers: http.Header{"Authentication": {"Basic bG9naW46cGFzc3dvcmQ="}, "Content-type": {"JSON"}},
 				},
 			},
 			wantErr: false,
@@ -91,6 +93,72 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 //		})
 //	}
 //}
+
+func TestTaskStorage_GetTaskStatus_RealDB(t *testing.T) {
+
+	ts := NewTaskStorage()
+
+	type args struct {
+		taskID string
+		result domain.ResultEntity
+	}
+	tests := []struct {
+		name    string
+		fields  *TaskStorage
+		args    args
+		want    domain.ResultEntity
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name: "found",
+			args: args{
+				taskID: "abc",
+				result: domain.ResultEntity{
+					TaskID:                 "abc",
+					TaskStatus:             "done",
+					ResponseHttpStatusCode: 200,
+					ResponseHeaders:        http.Header{"Result-Header1": {"sample-data"}, "Content-type": {"JSON"}},
+					ResponseBodyLength:     50,
+				},
+			},
+			fields: ts,
+			want: domain.ResultEntity{
+				TaskID:                 "abc",
+				TaskStatus:             "done",
+				ResponseHttpStatusCode: 200,
+				ResponseHeaders:        http.Header{"Result-Header1": {"sample-data"}, "Content-type": {"JSON"}},
+				ResponseBodyLength:     50,
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := TaskStorage{
+				DB: tt.fields.DB,
+			}
+
+			_, err := ts.DB.Exec(
+				`INSERT INTO tasks (task_id, task_status, result_http_status_code, result_headers, result_body_length)
+				VALUES ($1, $2, $3, $4, $5);`,
+				tt.args.result.TaskID, tt.args.result.TaskStatus, tt.args.result.ResponseHttpStatusCode, tt.args.result.ResponseHeaders, tt.args.result.ResponseBodyLength,
+			)
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			got, err := ts.GetTaskStatus(tt.args.taskID)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetTaskStatus() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetTaskStatus() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
 
 //func TestTaskStorage_GetTaskStatus(t *testing.T) {
 //	type fields struct {

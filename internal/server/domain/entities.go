@@ -1,16 +1,18 @@
 package domain
 
+import "net/http"
+
 type TaskEntity struct {
 	ID      string
 	Method  string
 	URL     string
-	Headers map[string]string
+	Headers http.Header
 }
 
 type ResultEntity struct {
-	ID                     string
+	TaskID                 string
 	TaskStatus             string
-	ResponseHttpStatusCode string
-	ResponseHeaders        map[string]string
+	ResponseHttpStatusCode int
+	ResponseHeaders        http.Header
 	ResponseBodyLength     int
 }

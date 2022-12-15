@@ -22,13 +22,13 @@ func NewTaskStorage() *TaskStorage {
 	}
 
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(
-	ID serial PRIMARY KEY,
+	TaskID serial PRIMARY KEY,
 	task_id text,
 	task_request_method text,
 	task_url text,
 	task_headers json,
 	task_status text DEFAULT 'new',
-	result_http_status_code text,
+	result_http_status_code INTEGER,
 	result_headers json,
 	result_body_length INTEGER
 	                         );`)
@@ -63,22 +63,21 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) 
 	// TODO - scan json to map (result_headers)
 
 	row := ts.DB.QueryRow(
-		`SELECT 
-    	task_status, 
-       	result_http_status_code, 
-       	result_headers,
-       	result_body_length, 
+		`SELECT task_status, result_http_status_code, result_headers, result_body_length
 		FROM tasks WHERE task_id = $1;`,
 		taskID)
 
 	re := domain.ResultEntity{}
-	err := row.Scan(&re)
+	err := row.Scan(&re.TaskStatus, &re.ResponseHttpStatusCode, &re.ResponseHeaders, &re.ResponseBodyLength)
+	if err != nil {
+		log.Println(err)
+	}
 	if err == sql.ErrNoRows {
 		log.Println("Storage GetTaskStatus, record not found")
 		return domain.ResultEntity{}, errors.New("Resource was not found")
 	}
 
-	re.ID = taskID
+	re.TaskID = taskID
 
 	log.Println("Storage GetTaskStatus - bye")
 

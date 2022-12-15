@@ -24,9 +24,9 @@ func NewTaskHandler(ts TaskService) TaskHandler {
 func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler CreateTask - hello")
 
-	// TODO: gen ID
+	// TODO: gen TaskID
 	// TODO: decode JSON body to struct
-	// TODO: return JSON with ID and http status 200
+	// TODO: return JSON with TaskID and http status 200
 
 	th.taskService.CreateTask(domain.TaskEntity{})
 
