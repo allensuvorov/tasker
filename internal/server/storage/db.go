@@ -77,7 +77,7 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (entity.ResultEntity, error) 
 
 	if err == sql.ErrNoRows {
 		log.Println("Storage GetTaskStatus, record not found")
-		return entity.ResultEntity{}, localError.ErrNotFound //errors.New("Resource was not found")
+		return entity.ResultEntity{}, localError.NotFound //errors.New("Resource was not found")
 	}
 	err = json.Unmarshal(responseHeadersBuffer, &re.ResponseHeaders)
 	if err != nil {
