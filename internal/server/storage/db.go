@@ -2,6 +2,7 @@ package storage
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"log"
 
@@ -68,15 +69,20 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) 
 		taskID)
 
 	re := domain.ResultEntity{}
-	err := row.Scan(&re.TaskStatus, &re.ResponseHttpStatusCode, &re.ResponseHeaders, &re.ResponseBodyLength)
+	var responseHeadersBuffer []byte
+	err := row.Scan(&re.TaskStatus, &re.ResponseHttpStatusCode, &responseHeadersBuffer, &re.ResponseBodyLength)
 	if err != nil {
 		log.Println(err)
 	}
+
 	if err == sql.ErrNoRows {
 		log.Println("Storage GetTaskStatus, record not found")
 		return domain.ResultEntity{}, errors.New("Resource was not found")
 	}
-
+	err = json.Unmarshal(responseHeadersBuffer, &re.ResponseHeaders)
+	if err != nil {
+		log.Println(err)
+	}
 	re.TaskID = taskID
 
 	log.Println("Storage GetTaskStatus - bye")

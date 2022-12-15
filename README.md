@@ -11,3 +11,10 @@ Code development progress:
 - increment2 - CreateTask with saving to DB and tests.
 - increment3 - GetTaskStatus with tests.
 - increment4 - Task agents with goroutines and tests.
+
+Plan:
+1. First - do what I already know 
+2. Next - do what needs study:
+- mode DB to Docker
+https://habr.com/ru/post/578744/
+- second container for storage methods tests
