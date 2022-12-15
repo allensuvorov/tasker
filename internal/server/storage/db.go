@@ -3,11 +3,12 @@ package storage
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
-	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
+
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
+	localError "github.com/allensuvorov/tasker/internal/server/domain/error"
 )
 
 type TaskStorage struct {
@@ -76,7 +77,7 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (entity.ResultEntity, error) 
 
 	if err == sql.ErrNoRows {
 		log.Println("Storage GetTaskStatus, record not found")
-		return entity.ResultEntity{}, errors.New("Resource was not found")
+		return entity.ResultEntity{}, localError.ErrNotFound //errors.New("Resource was not found")
 	}
 	err = json.Unmarshal(responseHeadersBuffer, &re.ResponseHeaders)
 	if err != nil {

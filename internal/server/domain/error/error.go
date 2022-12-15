@@ -1,7 +1,7 @@
-package err
+package error
 
 import "errors"
 
-var ErrorNotFound = errors.New("not found")
-var ErrorRecordExists = errors.New("record exists")
-var ErrorWrongContentType = errors.New("wrong content type in request")
+var ErrNotFound = errors.New("not found")
+var ErrRecordExists = errors.New("record exists")
+var ErrWrongContentType = errors.New("wrong content type in request")
