@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"github.com/allensuvorov/tasker/internal/server/domain"
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 	"net/http"
 )
 
 type TaskService interface {
-	CreateTask(te domain.TaskEntity)
-	GetTaskStatus(id string) domain.ResultEntity
+	CreateTask(te entity.TaskEntity)
+	GetTaskStatus(id string) entity.ResultEntity
 }
 
 type TaskHandler struct {
@@ -24,11 +24,15 @@ func NewTaskHandler(ts TaskService) TaskHandler {
 func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler CreateTask - hello")
 
-	// TODO: gen TaskID
 	// TODO: decode JSON body to struct
+	//if r.Header.Get("Content-Type") != "application/json" {
+	//	http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
+	//	return
+	//}
+	// TODO: gen TaskID
 	// TODO: return JSON with TaskID and http status 200
 
-	th.taskService.CreateTask(domain.TaskEntity{})
+	th.taskService.CreateTask(entity.TaskEntity{})
 
 	log.Println("Handler CreateTask - bye")
 }

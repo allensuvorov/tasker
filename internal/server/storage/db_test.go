@@ -1,12 +1,11 @@
 package storage
 
 import (
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 	"net/http"
 	"reflect"
 	"testing"
-
-	"github.com/allensuvorov/tasker/internal/server/domain"
 )
 
 //func TestNewTaskStorage(t *testing.T) {
@@ -32,7 +31,7 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 	ts := NewTaskStorage()
 
 	type args struct {
-		te domain.TaskEntity
+		te entity.TaskEntity
 	}
 	tests := []struct {
 		name    string
@@ -45,7 +44,7 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 			name:   "created",
 			fields: ts,
 			args: args{
-				te: domain.TaskEntity{
+				te: entity.TaskEntity{
 					ID:      "abcde",
 					Method:  http.MethodGet,
 					URL:     "http://google.com",
@@ -100,13 +99,13 @@ func TestTaskStorage_GetTaskStatus_RealDB(t *testing.T) {
 
 	type args struct {
 		taskID string
-		result domain.ResultEntity
+		result entity.ResultEntity
 	}
 	tests := []struct {
 		name    string
 		fields  *TaskStorage
 		args    args
-		want    domain.ResultEntity
+		want    entity.ResultEntity
 		wantErr bool
 	}{
 		// TODO: Add test cases.
@@ -114,7 +113,7 @@ func TestTaskStorage_GetTaskStatus_RealDB(t *testing.T) {
 			name: "found",
 			args: args{
 				taskID: "abc",
-				result: domain.ResultEntity{
+				result: entity.ResultEntity{
 					TaskID:                 "abc",
 					TaskStatus:             "done",
 					ResponseHttpStatusCode: 200,
@@ -123,7 +122,7 @@ func TestTaskStorage_GetTaskStatus_RealDB(t *testing.T) {
 				},
 			},
 			fields: ts,
-			want: domain.ResultEntity{
+			want: entity.ResultEntity{
 				TaskID:                 "abc",
 				TaskStatus:             "done",
 				ResponseHttpStatusCode: 200,

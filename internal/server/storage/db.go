@@ -4,11 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-
-	"github.com/allensuvorov/tasker/internal/server/domain"
 )
 
 type TaskStorage struct {
@@ -42,7 +41,7 @@ func NewTaskStorage() *TaskStorage {
 	}
 }
 
-func (ts TaskStorage) CreateTask(te domain.TaskEntity) error {
+func (ts TaskStorage) CreateTask(te entity.TaskEntity) error {
 	log.Println("Storage CreateTask - hello")
 
 	_, err := ts.DB.Exec(
@@ -58,7 +57,7 @@ func (ts TaskStorage) CreateTask(te domain.TaskEntity) error {
 	return nil
 }
 
-func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) {
+func (ts TaskStorage) GetTaskStatus(taskID string) (entity.ResultEntity, error) {
 	log.Println("Storage GetTaskStatus - hello")
 
 	// TODO - scan json to map (result_headers)
@@ -68,7 +67,7 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) 
 		FROM tasks WHERE task_id = $1;`,
 		taskID)
 
-	re := domain.ResultEntity{}
+	re := entity.ResultEntity{}
 	var responseHeadersBuffer []byte
 	err := row.Scan(&re.TaskStatus, &re.ResponseHttpStatusCode, &responseHeadersBuffer, &re.ResponseBodyLength)
 	if err != nil {
@@ -77,7 +76,7 @@ func (ts TaskStorage) GetTaskStatus(taskID string) (domain.ResultEntity, error) 
 
 	if err == sql.ErrNoRows {
 		log.Println("Storage GetTaskStatus, record not found")
-		return domain.ResultEntity{}, errors.New("Resource was not found")
+		return entity.ResultEntity{}, errors.New("Resource was not found")
 	}
 	err = json.Unmarshal(responseHeadersBuffer, &re.ResponseHeaders)
 	if err != nil {

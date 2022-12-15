@@ -2,7 +2,7 @@ package storage
 
 import (
 	"database/sql"
-	"github.com/allensuvorov/tasker/internal/server/domain"
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 )
 
 type Storage struct {
@@ -16,8 +16,8 @@ func NewStorage() *Storage {
 	}
 }
 
-func (s Storage) GetNewTasks() []domain.TaskEntity {
-	return []domain.TaskEntity{}
+func (s Storage) GetNewTasks() []entity.TaskEntity {
+	return []entity.TaskEntity{}
 }
 func (s Storage) BulkUpdateTaskStatuses(map[string]int)               {}
-func (s Storage) BulkCreateTaskResults(results []domain.ResultEntity) {}
+func (s Storage) BulkCreateTaskResults(results []entity.ResultEntity) {}
