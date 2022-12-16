@@ -1,18 +1,18 @@
 package entity
 
-import "net/http"
+type Headers map[string]string
 
 type TaskEntity struct {
 	ID      string
 	Method  string
 	URL     string
-	Headers http.Header
+	Headers Headers
 }
 
 type ResultEntity struct {
 	TaskID                 string
 	TaskStatus             string
 	ResponseHttpStatusCode int
-	ResponseHeaders        http.Header
+	ResponseHeaders        Headers
 	ResponseBodyLength     int
 }

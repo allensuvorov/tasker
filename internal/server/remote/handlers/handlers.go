@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -48,7 +49,7 @@ func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	var decVal struct { // decoded value
 		Method  string
 		URL     string
-		Headers http.Header
+		Headers entity.Headers //http.Header
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&decVal); err != nil {
@@ -63,7 +64,7 @@ func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	taskID := string(bytesTaskID)
+	taskID := hex.EncodeToString(bytesTaskID)
 
 	te := entity.TaskEntity{
 		ID:      taskID,
