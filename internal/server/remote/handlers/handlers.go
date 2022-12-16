@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"crypto/rand"
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -23,21 +25,66 @@ func NewTaskHandler(ts TaskService) TaskHandler {
 	}
 }
 
+func generateRandom(size int) ([]byte, error) {
+	b := make([]byte, size)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+const IDLength int = 4
+
 func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler CreateTask - hello")
 
-	// TODO: decode JSON body to struct
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, localError.WrongContentType.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// TODO: gen TaskID
-	// TODO: return JSON with TaskID and http status 200
+	var decVal struct { // decoded value
+		Method  string
+		URL     string
+		Headers http.Header
+	}
 
-	th.taskService.CreateTask(entity.TaskEntity{})
+	if err := json.NewDecoder(r.Body).Decode(&decVal); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Println("Handler CreateTask - request: Task", decVal)
+
+	bytesTaskID, err := generateRandom(IDLength)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	taskID := string(bytesTaskID)
+
+	te := entity.TaskEntity{
+		ID:      taskID,
+		Method:  decVal.Method,
+		URL:     decVal.URL,
+		Headers: decVal.Headers,
+	}
+	th.taskService.CreateTask(te)
+
+	w.Header().Set("content-type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	encVal := struct { // encoded value
+		ID string `json:"id"`
+	}{
+		ID: taskID,
+	}
 
 	log.Println("Handler CreateTask - bye")
+	json.NewEncoder(w).Encode(encVal)
+
 }
 
 func (th TaskHandler) GetTaskStatus(w http.ResponseWriter, r *http.Request) {
