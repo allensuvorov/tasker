@@ -31,7 +31,7 @@ func (taskService TaskService) CreateTask(te entity.TaskEntity) {
 	log.Println("Service CreateTask - bye")
 }
 
-func (taskService TaskService) GetTaskStatus(taskID string) entity.ResultEntity {
+func (taskService TaskService) GetTaskStatus(taskID string) (entity.ResultEntity, error) {
 	log.Println("Service GetTaskStatus - hello")
 
 	re, err := taskService.taskStorage.GetTaskStatus(taskID)
@@ -40,5 +40,5 @@ func (taskService TaskService) GetTaskStatus(taskID string) entity.ResultEntity 
 	}
 
 	log.Println("Service GetTaskStatus - bye")
-	return re
+	return re, err
 }

@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
 
@@ -13,7 +14,7 @@ import (
 
 type TaskService interface {
 	CreateTask(te entity.TaskEntity)
-	GetTaskStatus(id string) entity.ResultEntity
+	GetTaskStatus(id string) (entity.ResultEntity, error)
 }
 
 type TaskHandler struct {
@@ -89,5 +90,19 @@ func (th TaskHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (th TaskHandler) GetTaskStatus(w http.ResponseWriter, r *http.Request) {
-	//th.taskService.GetTaskStatus(taskID)
+	log.Println("Handler GetTaskStatus - hello")
+	taskID := chi.URLParam(r, "taskID")
+
+	log.Println("Handler GetTaskStatus, taskID", taskID)
+
+	re, err := th.taskService.GetTaskStatus(taskID)
+
+	if err == localError.NotFound {
+		http.Error(w, localError.NotFound.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	log.Println("Handler GetTaskStatus - bye")
+	json.NewEncoder(w).Encode(re)
 }

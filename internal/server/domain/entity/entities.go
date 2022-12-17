@@ -10,9 +10,9 @@ type TaskEntity struct {
 }
 
 type ResultEntity struct {
-	TaskID                 string
-	TaskStatus             string
-	ResponseHttpStatusCode int
-	ResponseHeaders        Headers
-	ResponseBodyLength     int
+	TaskID                 string  `json:"id"`
+	TaskStatus             string  `json:"status"`
+	ResponseHttpStatusCode int     `json:"httpStatusCode"`
+	ResponseHeaders        Headers `json:"headers"`
+	ResponseBodyLength     int     `json:"length"`
 }
