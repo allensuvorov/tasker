@@ -8,9 +8,9 @@ The client sends a task to the service to perform an http request to a 3rd-party
 Code development progress:
 
 - increment1 - Project diagram, code with interfaces.
-- increment2 - CreateTask with saving to DB and tests.
-- increment3 - GetTaskStatus with tests.
-- increment4 - Task agents with goroutines and tests.
+- increment2 - Handlers with saving to DB and tests.
+- increment3 - Task agents with goroutines and tests.
+- increment4 - Docker, and other stuff
 
 Plan:
 1. First - do what I already know 
