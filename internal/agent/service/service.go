@@ -31,22 +31,22 @@ func NewService(s Storage, r Request) Service {
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 
-	for {
+	for i := 0; i < 2; i++ {
 		// TODO infinite loop calls this function, gets data from DB and updates statuses
-		//s.GetNewTasks()
+		s.GetNewTasks()
+		time.Sleep(1 * timeInterval)
 	}
-
 	log.Println("Service.StartGettingNewTasks - bye")
-
 	return nil
 }
 
 func (s Service) GetNewTasks() ([]entity.TaskEntity, error) {
 	log.Println("Service.GetNewTasks - hello")
 
+	newTasks := s.storage.GetNewTasks()
 	log.Println("Service.GetNewTasks - bye")
 
-	return []entity.TaskEntity{}, nil
+	return newTasks, nil
 }
 
 func (s Service) DoTasks([]entity.TaskEntity) []entity.ResultEntity {
