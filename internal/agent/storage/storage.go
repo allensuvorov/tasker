@@ -28,11 +28,20 @@ func NewStorage() *Storage {
 func (s *Storage) GetNewTasks() []entity.TaskEntity {
 	log.Println("Storage.GetNewTasks - hello")
 
-	rows, err := s.DB.Query(`SELECT task_id, task_request_method, task_headers, task_url
-		FROM tasks WHERE task_status = $1;`, "new")
+	// `UPDATE tasks SET task_status = $1 WHERE task_status = $0
+	// RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new"
+
+	rows, err := s.DB.Query(`UPDATE tasks SET task_status = $1 WHERE task_status = $2
+	RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new")
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//rows, err := s.DB.Query(`SELECT task_id, task_request_method, task_headers, task_url
+	//	FROM tasks WHERE task_status = $1;`, "new")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	defer rows.Close()
 
