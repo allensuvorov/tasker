@@ -7,7 +7,7 @@ import (
 )
 
 type Storage interface {
-	GetNewTasks() []entity.TaskEntity
+	GetNewTasks() ([]entity.TaskEntity, error)
 	BulkUpdateTaskStatuses(map[string]int)
 	BulkCreateTaskResults(results []entity.ResultEntity)
 }
@@ -43,7 +43,12 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 func (s Service) GetNewTasks() ([]entity.TaskEntity, error) {
 	log.Println("Service.GetNewTasks - hello")
 
-	newTasks := s.storage.GetNewTasks()
+	newTasks, err := s.storage.GetNewTasks()
+
+	if err != nil {
+		return nil, err
+	}
+
 	log.Println("Service.GetNewTasks - bye")
 	// TODO add data from DB to ch
 	return newTasks, nil

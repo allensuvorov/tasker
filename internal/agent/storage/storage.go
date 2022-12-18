@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -25,28 +26,24 @@ func NewStorage() *Storage {
 	}
 }
 
-func (s *Storage) GetNewTasks() []entity.TaskEntity {
+func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 	log.Println("Storage.GetNewTasks - hello")
 
-	// `UPDATE tasks SET task_status = $1 WHERE task_status = $0
-	// RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new"
-
-	rows, err := s.DB.Query(`UPDATE tasks SET task_status = $1 WHERE task_status = $2
-	RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new")
-	if err != nil {
-		log.Fatal(err)
+	if s.DB == nil {
+		return nil, errors.New("you haven`t opened the database connection")
 	}
 
-	//rows, err := s.DB.Query(`SELECT task_id, task_request_method, task_headers, task_url
-	//	FROM tasks WHERE task_status = $1;`, "new")
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
+	rows, err := s.DB.Query(`UPDATE tasks SET task_status = $1 WHERE task_status = $2
+		RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new")
+
+	if err != nil {
+		return nil, err
+	}
 
 	defer rows.Close()
 
 	if rows.Err() != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	var newTasks []entity.TaskEntity
 	for rows.Next() {
@@ -66,7 +63,7 @@ func (s *Storage) GetNewTasks() []entity.TaskEntity {
 	log.Println("Storage.GetNewTasks got new tasks:", newTasks)
 	// and updates statuses
 	log.Println("Storage.GetNewTasks - bye")
-	return newTasks
+	return newTasks, nil
 }
 func (s Storage) BulkUpdateTaskStatuses(map[string]int)               {}
 func (s Storage) BulkCreateTaskResults(results []entity.ResultEntity) {}
