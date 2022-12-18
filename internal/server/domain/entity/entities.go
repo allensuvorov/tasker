@@ -14,5 +14,5 @@ type ResultEntity struct {
 	TaskStatus             string  `json:"status"`
 	ResponseHttpStatusCode int     `json:"httpStatusCode"`
 	ResponseHeaders        Headers `json:"headers"`
-	ResponseBodyLength     int     `json:"length"`
+	ResponseBodyLength     string  `json:"length"`
 }

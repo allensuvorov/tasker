@@ -13,7 +13,7 @@ type Storage interface {
 }
 
 type Request interface {
-	Request(entity.TaskEntity) entity.ResultEntity
+	Request(taskEntity entity.TaskEntity) (entity.ResultEntity, error)
 }
 
 type Service struct {
@@ -32,11 +32,9 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 
 	for i := 0; i < 2; i++ {
-		// TODO infinite loop calls this function
-		newTasks, err := s.GetNewTasks()
-
+		err := s.getNewTasks()
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		time.Sleep(1 * timeInterval)
@@ -45,21 +43,41 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	return nil
 }
 
-func (s Service) GetNewTasks() ([]entity.TaskEntity, error) {
-	log.Println("Service.GetNewTasks - hello")
+func (s Service) getNewTasks() error {
+	log.Println("Service.getNewTasks - hello")
 
 	newTasks, err := s.storage.GetNewTasks()
-
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	log.Println("Service.GetNewTasks - bye")
+	if len(newTasks) != 0 {
+		s.schedule(newTasks)
+	}
 
-	return newTasks, nil
+	log.Println("Service.getNewTasks - bye")
+
+	return nil
 }
 
-func (s Service) DoTasks([]entity.TaskEntity) []entity.ResultEntity {
-	return []entity.ResultEntity{}
+func (s Service) schedule(newTasks []entity.TaskEntity) {
+	var results []entity.ResultEntity
+	// go func add - fan-out
+
+	for _, task := range newTasks {
+
+		// go func
+		result, err := s.request.Request(task)
+		if err != nil {
+			log.Println(err)
+		}
+		results = append(results, result)
+		// results to ch buffer - fan-in
+	}
+
+	s.bulkCreateTaskResults(results)
 }
-func (s Service) BulkCreateTaskResults(results []entity.ResultEntity) {}
+
+func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
+	s.storage.BulkCreateTaskResults(results)
+}

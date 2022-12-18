@@ -27,7 +27,7 @@ func NewStorage() *Storage {
 }
 
 func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
-	log.Println("Storage.GetNewTasks - hello")
+	log.Println("Storage.getNewTasks - hello")
 
 	if s.DB == nil {
 		return nil, errors.New("you haven`t opened the database connection")
@@ -60,9 +60,9 @@ func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 
 		newTasks = append(newTasks, task)
 	}
-	log.Println("Storage.GetNewTasks got new tasks:", newTasks)
+	log.Println("Storage.getNewTasks got new tasks:", newTasks)
 	// and updates statuses
-	log.Println("Storage.GetNewTasks - bye")
+	log.Println("Storage.getNewTasks - bye")
 	return newTasks, nil
 }
 func (s Storage) BulkUpdateTaskStatuses(map[string]int)               {}

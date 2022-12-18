@@ -2,6 +2,8 @@ package remote
 
 import (
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
+	"log"
+	"net/http"
 )
 
 type Request struct{}
@@ -10,6 +12,35 @@ func NewRequest() Request {
 	return Request{}
 }
 
-func (r Request) Request(entity.TaskEntity) entity.ResultEntity {
-	return entity.ResultEntity{}
+func (r Request) Request(taskEntity entity.TaskEntity) (entity.ResultEntity, error) {
+	result := entity.ResultEntity{}
+	client := &http.Client{}
+
+	request, err := http.NewRequest(taskEntity.Method, taskEntity.URL, nil)
+	if err != nil {
+		log.Println(err)
+		return entity.ResultEntity{}, err
+	}
+	request.Header.Add("Content-Type", "application/json")
+
+	response, err := client.Do(request)
+	if err != nil {
+		log.Println(err)
+		result.TaskStatus = "error"
+		return result, err
+	}
+
+	var headers entity.Headers
+	for k, v := range response.Header {
+		headers[k] = v[0]
+	}
+
+	result.TaskStatus = "done"
+	result.ResponseHttpStatusCode = response.StatusCode
+	result.ResponseHeaders = headers
+	result.ResponseBodyLength = response.Header.Get("Content-Length")
+
+	log.Println("Result", result)
+
+	return result, nil
 }
