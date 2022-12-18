@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
+	"log"
 	"time"
 )
 
@@ -27,9 +28,27 @@ func NewService(s Storage, r Request) Service {
 	}
 }
 
-func (s Service) GetNewTasks(timeInterval time.Duration) []entity.TaskEntity {
-	return []entity.TaskEntity{}
+func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
+	log.Println("Service.StartGettingNewTasks - hello")
+
+	for {
+		// TODO infinite loop calls this function, gets data from DB and updates statuses
+		//s.GetNewTasks()
+	}
+
+	log.Println("Service.StartGettingNewTasks - bye")
+
+	return nil
 }
+
+func (s Service) GetNewTasks() ([]entity.TaskEntity, error) {
+	log.Println("Service.GetNewTasks - hello")
+
+	log.Println("Service.GetNewTasks - bye")
+
+	return []entity.TaskEntity{}, nil
+}
+
 func (s Service) DoTasks([]entity.TaskEntity) []entity.ResultEntity {
 	return []entity.ResultEntity{}
 }

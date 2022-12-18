@@ -10,6 +10,8 @@ Code development progress:
 - increment1 - Project diagram, code with interfaces.
 - increment2 - Handlers with saving to DB and tests.
 - increment3 - Task agents with goroutines and tests.
+  - get new tasks from DB (infinite loop), update status
+  - put new tasks in a []buffer them 
 - increment4 - Docker, and other stuff
 
 Plan:

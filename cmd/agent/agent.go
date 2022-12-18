@@ -1,6 +1,7 @@
-package agent
+package main
 
 import (
+	"log"
 	"time"
 
 	"github.com/allensuvorov/tasker/internal/agent/remote"
@@ -13,5 +14,7 @@ func main() {
 	Request := remote.NewRequest()
 	Service := service.NewService(Storage, Request)
 	newTaskCheckInterval := 500 * time.Millisecond
-	Service.GetNewTasks(newTaskCheckInterval)
+
+	log.Println("Getting new tasks from storage...")
+	Service.StartGettingNewTasks(newTaskCheckInterval)
 }

@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
+	"log"
 )
 
 type Storage struct {
@@ -17,6 +18,9 @@ func NewStorage() *Storage {
 }
 
 func (s Storage) GetNewTasks() []entity.TaskEntity {
+	log.Println("Storage.GetNewTasks - hello")
+
+	log.Println("Storage.GetNewTasks - bye")
 	return []entity.TaskEntity{}
 }
 func (s Storage) BulkUpdateTaskStatuses(map[string]int)               {}
