@@ -33,7 +33,12 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 
 	for i := 0; i < 2; i++ {
 		// TODO infinite loop calls this function
-		s.GetNewTasks()
+		newTasks, err := s.GetNewTasks()
+
+		if err != nil {
+			return nil, err
+		}
+
 		time.Sleep(1 * timeInterval)
 	}
 	log.Println("Service.StartGettingNewTasks - bye")
@@ -50,7 +55,7 @@ func (s Service) GetNewTasks() ([]entity.TaskEntity, error) {
 	}
 
 	log.Println("Service.GetNewTasks - bye")
-	// TODO add data from DB to ch
+
 	return newTasks, nil
 }
 
