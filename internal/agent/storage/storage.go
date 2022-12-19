@@ -33,7 +33,6 @@ func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 		return nil, errors.New("you haven`t opened the database connection")
 	}
 	// TODO: do this in transaction, so that if there is an error amidst execution rollback saves the day
-	//rows, err := s.DB.Query(`UPDATE tasks SET task_status = $2 WHERE task_status = $1 RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new")
 	rows, err := s.DB.Query(`UPDATE tasks SET task_status = $1 WHERE task_status = $2 RETURNING task_id, task_request_method, task_headers, task_url;`, "in_process", "new")
 	if err != nil {
 		return nil, err

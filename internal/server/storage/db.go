@@ -15,6 +15,8 @@ type TaskStorage struct {
 	DB *sql.DB
 }
 
+// TODO move DB to docker
+
 func NewTaskStorage() *TaskStorage {
 	db, err := sql.Open("pgx",
 		"postgres://postgres:sql@localhost:5432/postgres")
@@ -60,8 +62,6 @@ func (ts TaskStorage) CreateTask(te entity.TaskEntity) error {
 
 func (ts TaskStorage) GetTaskStatus(taskID string) (entity.ResultEntity, error) {
 	log.Println("Storage GetTaskStatus - hello")
-
-	// TODO - scan json to map (result_headers)
 
 	row := ts.DB.QueryRow(
 		`SELECT task_status, result_http_status_code, result_headers, result_body_length

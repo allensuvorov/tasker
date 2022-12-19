@@ -62,7 +62,7 @@ func (s Service) getNewTasks() error {
 
 func (s Service) schedule(newTasks []entity.TaskEntity) {
 	var results []entity.ResultEntity
-	// go func add - fan-out
+	// TODO go func add - fan-out
 
 	for _, task := range newTasks {
 
