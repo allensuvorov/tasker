@@ -37,6 +37,7 @@ func (r Request) Request(taskEntity entity.TaskEntity) (entity.ResultEntity, err
 		headers[k] = v[0]
 	}
 
+	result.TaskID = taskEntity.ID
 	result.TaskStatus = "done"
 	result.ResponseHttpStatusCode = response.StatusCode
 	result.ResponseHeaders = headers

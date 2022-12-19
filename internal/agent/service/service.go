@@ -9,7 +9,7 @@ import (
 type Storage interface {
 	GetNewTasks() ([]entity.TaskEntity, error)
 	BulkUpdateTaskStatuses(map[string]int)
-	BulkCreateTaskResults(results []entity.ResultEntity)
+	BulkCreateTaskResults(results []entity.ResultEntity) error
 }
 
 type Request interface {

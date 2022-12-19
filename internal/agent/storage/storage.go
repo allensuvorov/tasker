@@ -64,5 +64,38 @@ func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 	log.Println("Storage.getNewTasks - bye")
 	return newTasks, nil
 }
-func (s Storage) BulkUpdateTaskStatuses(map[string]int)               {}
-func (s Storage) BulkCreateTaskResults(results []entity.ResultEntity) {}
+func (s *Storage) BulkUpdateTaskStatuses(map[string]int) {}
+func (s *Storage) BulkCreateTaskResults(results []entity.ResultEntity) error {
+	log.Println("Storage.BulkCreateTaskResults - hello")
+
+	if s.DB == nil {
+		return errors.New("you haven`t opened the database connection")
+	}
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(
+		`UPDATE tasks 
+		SET task_status = $2, result_http_status_code = $3, result_headers = $4, result_body_length = $5  
+    	WHERE task_id = $1;`,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	for _, r := range results {
+		if _, err = stmt.Exec(r.TaskID, r.TaskStatus, r.ResponseHttpStatusCode, r.ResponseHeaders, r.ResponseBodyLength); err != nil {
+			return err
+		}
+	}
+
+	log.Println("Storage.BulkCreateTaskResults - bye")
+
+	return tx.Commit()
+}
