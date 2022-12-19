@@ -45,11 +45,23 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 			fields: ts,
 			args: args{
 				te: entity.TaskEntity{
-					ID:     "abcde",
-					Method: http.MethodGet,
-					URL:    "http://google.com",
-					//Headers: http.Header{"Authentication": {"Basic bG9naW46cGFzc3dvcmQ="}, "Content-type": {"JSON"}},
+					ID:      "abcde",
+					Method:  http.MethodGet,
+					URL:     "http://google.com",
 					Headers: entity.Headers{"Authentication": "Basic bG9naW46cGFzc3dvcmQ=", "Content-type": "JSON"},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name:   "created, this task is to check its own status",
+			fields: ts,
+			args: args{
+				te: entity.TaskEntity{
+					ID:      "checkstatus",
+					Method:  http.MethodGet,
+					URL:     "http://localhost:8080/task/checkstatus",
+					Headers: entity.Headers{"Content-type": "JSON"},
 				},
 			},
 			wantErr: false,

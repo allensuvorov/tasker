@@ -13,6 +13,8 @@ func NewRequest() Request {
 }
 
 func (r Request) Request(taskEntity entity.TaskEntity) (entity.ResultEntity, error) {
+	log.Println("Remote.Request - hello")
+
 	result := entity.ResultEntity{}
 	client := &http.Client{}
 
@@ -30,7 +32,7 @@ func (r Request) Request(taskEntity entity.TaskEntity) (entity.ResultEntity, err
 		return result, err
 	}
 
-	var headers entity.Headers
+	headers := make(entity.Headers)
 	for k, v := range response.Header {
 		headers[k] = v[0]
 	}
@@ -40,7 +42,8 @@ func (r Request) Request(taskEntity entity.TaskEntity) (entity.ResultEntity, err
 	result.ResponseHeaders = headers
 	result.ResponseBodyLength = response.Header.Get("Content-Length")
 
-	log.Println("Result", result)
+	log.Println("Remote.Request - Result is:", result)
 
+	log.Println("Remote.Request - bye")
 	return result, nil
 }
