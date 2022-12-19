@@ -32,21 +32,30 @@ func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 	if s.DB == nil {
 		return nil, errors.New("you haven`t opened the database connection")
 	}
-	// TODO: do this in transaction, so that if there is an error amidst execution rollback saves the day
-	rows, err := s.DB.Query(`UPDATE tasks 
-		SET task_status = $1 
-		WHERE task_status = $2 RETURNING task_id, task_request_method, task_headers, task_url;`,
-		"in_process", "new")
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(
+		`UPDATE tasks 
+		SET task_status = $1 WHERE task_status = $2 
+		RETURNING task_id, task_request_method, task_headers, task_url;`,
+	)
 	if err != nil {
 		return nil, err
 	}
 
-	defer rows.Close()
+	defer stmt.Close()
 
-	if rows.Err() != nil {
+	rows, err := stmt.Query("in_process", "new")
+	if err != nil {
 		return nil, err
 	}
 	var newTasks []entity.TaskEntity
+
 	for rows.Next() {
 		task := entity.TaskEntity{}
 		var responseHeadersBuffer []byte
@@ -61,10 +70,13 @@ func (s *Storage) GetNewTasks() ([]entity.TaskEntity, error) {
 
 		newTasks = append(newTasks, task)
 	}
+
 	log.Println("Storage.getNewTasks got new tasks:", newTasks)
-	// and updates statuses
 	log.Println("Storage.getNewTasks - bye")
-	return newTasks, nil
+
+	err = tx.Commit()
+
+	return newTasks, err
 }
 func (s *Storage) BulkAddTaskResults(results []entity.ResultEntity) error {
 	log.Println("Storage.BulkAddTaskResults - hello")
