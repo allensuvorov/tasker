@@ -8,8 +8,7 @@ import (
 
 type Storage interface {
 	GetNewTasks() ([]entity.TaskEntity, error)
-	BulkUpdateTaskStatuses(map[string]int)
-	BulkCreateTaskResults(results []entity.ResultEntity) error
+	BulkAddTaskResults(results []entity.ResultEntity) error
 }
 
 type Request interface {
@@ -79,5 +78,5 @@ func (s Service) schedule(newTasks []entity.TaskEntity) {
 }
 
 func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
-	s.storage.BulkCreateTaskResults(results)
+	s.storage.BulkAddTaskResults(results)
 }
