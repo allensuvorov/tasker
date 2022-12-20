@@ -31,20 +31,44 @@ func NewService(s Storage, r Request) Service {
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 
+	s.createWorkers(1000)
+
 	for i := 0; i < 1; i++ {
-		startTimer := time.Now()
 
 		err := s.getNewTasks()
 		if err != nil {
 			return err
 		}
-		duration := time.Since(startTimer)
-		fmt.Printf("Servis.StartGettingNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 
 		time.Sleep(1 * timeInterval)
 	}
 	log.Println("Service.StartGettingNewTasks - bye")
 	return nil
+}
+
+var taskCh = make(chan entity.TaskEntity)
+
+// TODO need channel here
+var results []entity.ResultEntity
+
+// bulkCreateTaskResults(results)
+
+func (s Service) createWorkers(n uint) {
+	for i := 0; i < 1000; i++ {
+		go func() {
+			for task := range taskCh {
+				s.makeRequest(task)
+			}
+		}()
+	}
+}
+
+func (s Service) makeRequest(task entity.TaskEntity) {
+	result, err := s.request.Request(task)
+	if err != nil {
+		log.Println(err)
+	}
+	results = append(results, result)
 }
 
 func (s Service) getNewTasks() error {
@@ -57,7 +81,9 @@ func (s Service) getNewTasks() error {
 	}
 
 	if len(newTasks) != 0 {
-		s.schedule(newTasks)
+		for _, task := range newTasks {
+			taskCh <- task
+		}
 	}
 
 	log.Println("Service.getNewTasks - bye")
@@ -66,27 +92,28 @@ func (s Service) getNewTasks() error {
 	return nil
 }
 
-func (s Service) schedule(newTasks []entity.TaskEntity) {
-	var results []entity.ResultEntity
-	// TODO go func add - fan-out
-
-	for _, task := range newTasks {
-
-		// go func
-		result, err := s.request.Request(task)
-		if err != nil {
-			log.Println(err)
-		}
-		results = append(results, result)
-		// results to ch buffer - fan-in
-	}
-
-	s.bulkCreateTaskResults(results)
-}
-
 func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
 	err := s.storage.BulkAddTaskResults(results)
 	if err != nil {
 		log.Println(err)
 	}
 }
+
+//func (s Service) schedule(newTasks []entity.TaskEntity) {
+//	var results []entity.ResultEntity
+//	// TODO go func add - fan-out
+//	// TODO for very long lists such as 10^10, let's process lists concurrently
+//
+//	for _, task := range newTasks {
+//
+//		// go func
+//		result, err := s.request.Request(task)
+//		if err != nil {
+//			log.Println(err)
+//		}
+//		results = append(results, result)
+//		// results to ch buffer - fan-in
+//	}
+//
+//	s.bulkCreateTaskResults(results)
+//}
