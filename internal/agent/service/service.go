@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 	"time"
@@ -31,10 +32,14 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 
 	for i := 0; i < 2; i++ {
+		startTimer := time.Now()
+
 		err := s.getNewTasks()
 		if err != nil {
 			return err
 		}
+		duration := time.Since(startTimer)
+		fmt.Printf("Servis.StartGettingNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 
 		time.Sleep(1 * timeInterval)
 	}

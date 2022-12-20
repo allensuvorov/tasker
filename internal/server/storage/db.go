@@ -33,7 +33,7 @@ func NewTaskStorage() *TaskStorage {
 	task_status text DEFAULT 'new',
 	result_http_status_code INTEGER,
 	result_headers json,
-	result_body_length test
+	result_body_length text
 	                         );`)
 	if err != nil {
 		log.Fatal(err)
