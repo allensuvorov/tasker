@@ -31,7 +31,7 @@ func NewService(s Storage, r Request) Service {
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 1; i++ {
 		startTimer := time.Now()
 
 		err := s.getNewTasks()
@@ -48,6 +48,7 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 }
 
 func (s Service) getNewTasks() error {
+	startTimer := time.Now()
 	log.Println("Service.getNewTasks - hello")
 
 	newTasks, err := s.storage.GetNewTasks()
@@ -60,7 +61,8 @@ func (s Service) getNewTasks() error {
 	}
 
 	log.Println("Service.getNewTasks - bye")
-
+	duration := time.Since(startTimer)
+	fmt.Printf("Servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 	return nil
 }
 
@@ -83,5 +85,8 @@ func (s Service) schedule(newTasks []entity.TaskEntity) {
 }
 
 func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
-	s.storage.BulkAddTaskResults(results)
+	err := s.storage.BulkAddTaskResults(results)
+	if err != nil {
+		log.Println(err)
+	}
 }

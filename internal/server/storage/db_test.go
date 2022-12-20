@@ -26,6 +26,7 @@ import (
 
 // TODO: create Test with mock database
 // TODO add cleanup - garbage in, garbage out
+
 func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 
 	ts := NewTaskStorage()
@@ -75,6 +76,54 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 			if err := ts.CreateTask(tt.args.te); (err != nil) != tt.wantErr {
 				t.Errorf("CreateTask() error = %v, wantErr %v", err, tt.wantErr)
 			}
+		})
+	}
+}
+
+func TestTaskStorage_Create10Tasks_RealDB(t *testing.T) {
+
+	ts := NewTaskStorage()
+
+	type args struct {
+		te entity.TaskEntity
+	}
+	tests := []struct {
+		name    string
+		fields  *TaskStorage
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+		{
+			name:   "created",
+			fields: ts,
+			args: args{
+				te: entity.TaskEntity{
+					ID:      "boredapi",
+					Method:  http.MethodGet,
+					URL:     "https://www.boredapi.com/api/activity",
+					Headers: entity.Headers{"Content-type": "JSON"},
+				},
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ts := TaskStorage{
+				DB: tt.fields.DB,
+			}
+
+			for i := 0; i < 10; i++ {
+				if err := ts.CreateTask(tt.args.te); (err != nil) != tt.wantErr {
+					t.Errorf("CreateTask() error = %v, wantErr %v", err, tt.wantErr)
+				}
+			}
+
+			// run agent
+
+			// clean Data
+
 		})
 	}
 }
