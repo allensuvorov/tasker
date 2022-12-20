@@ -25,7 +25,7 @@ import (
 //}
 
 // TODO: create Test with mock database
-
+// TODO add cleanup - garbage in, garbage out
 func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 
 	ts := NewTaskStorage()
@@ -106,6 +106,7 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 //	}
 //}
 
+// TODO add an clean up - garbage in, garbage out
 func TestTaskStorage_GetTaskStatus_RealDB(t *testing.T) {
 
 	ts := NewTaskStorage()
