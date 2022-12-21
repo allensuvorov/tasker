@@ -112,3 +112,44 @@ func (s *Storage) BulkAddTaskResults(results []entity.ResultEntity) error {
 
 	return tx.Commit()
 }
+
+func (s *Storage) BulkAddTaskResultsViaCh(resultCh chan entity.ResultEntity) error {
+	log.Println("Storage.BulkAddTaskResultsViaCh - hello")
+
+	if s.DB == nil {
+		return errors.New("you haven`t opened the database connection")
+	}
+
+	tx, err := s.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(
+		`UPDATE tasks 
+		SET task_status = $2, result_http_status_code = $3, result_headers = $4, result_body_length = $5  
+    	WHERE task_id = $1;`,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+loop:
+	for {
+		select {
+		case r := <-resultCh:
+			if _, err = stmt.Exec(r.TaskID, r.TaskStatus, r.ResponseHttpStatusCode, r.ResponseHeaders, r.ResponseBodyLength); err != nil {
+				return err
+			}
+		default:
+			break loop
+		}
+	}
+
+	log.Println("Storage.BulkAddTaskResultsViaCh - bye")
+
+	return tx.Commit()
+}

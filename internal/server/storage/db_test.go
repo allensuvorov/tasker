@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 	"net/http"
@@ -115,6 +116,7 @@ func TestTaskStorage_Create10Tasks_RealDB(t *testing.T) {
 			}
 
 			for i := 0; i < 10; i++ {
+				tt.args.te.ID = "testtask" + fmt.Sprint(i)
 				if err := ts.CreateTask(tt.args.te); (err != nil) != tt.wantErr {
 					t.Errorf("CreateTask() error = %v, wantErr %v", err, tt.wantErr)
 				}

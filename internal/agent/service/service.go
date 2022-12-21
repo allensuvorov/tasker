@@ -31,10 +31,11 @@ func NewService(s Storage, r Request) Service {
 
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
+	startTimer := time.Now()
 
 	s.createWorkers(1000)
 
-	for i := 0; i < 1; i++ {
+	for i := 0; i < 10; i++ {
 
 		err := s.getNewTasks()
 		if err != nil {
@@ -42,19 +43,21 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 		}
 
 		time.Sleep(1 * timeInterval)
+		duration := time.Since(startTimer)
+		fmt.Printf("Servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 	}
 	log.Println("Service.StartGettingNewTasks - bye")
 	return nil
 }
 
 var taskCh = make(chan entity.TaskEntity)
-var resultCh = make(chan entity.ResultEntity, 1000)
+var resultCh = make(chan entity.ResultEntity, 5)
 
 // TODO need channel here
-var results []entity.ResultEntity
+//var results []entity.ResultEntity
 
-func (s Service) createWorkers(n uint) {
-	for i := 0; i < 1000; i++ {
+func (s Service) createWorkers(n int) {
+	for i := 0; i < n; i++ {
 		go func() {
 			for task := range taskCh {
 				s.makeRequest(task)
@@ -64,6 +67,8 @@ func (s Service) createWorkers(n uint) {
 }
 
 func (s Service) makeRequest(task entity.TaskEntity) {
+	log.Println("Service.makeRequest - Hello")
+
 	result, err := s.request.Request(task)
 	if err != nil {
 		log.Println(err)
@@ -71,24 +76,18 @@ func (s Service) makeRequest(task entity.TaskEntity) {
 	select {
 	case resultCh <- result:
 	default:
-
+		s.storage.BulkAddTaskResultsViaCh(resultCh)
 	}
-	resultCh <- result
-	//select {
-	//case db.BufferCh <- v:
-	//default:
-	//	db.flushBufferToDB()
-	//}
 
 	//results = append(results, result)
 	//if len(results) == 1000 {
-	//	s.bulkCreateTaskResults(results)
+	//	s.bulkAddTaskResults(results)
 	//	results = nil
 	//}
+	log.Println("Service.makeRequest - Bye")
 }
 
 func (s Service) getNewTasks() error {
-	startTimer := time.Now()
 	log.Println("Service.getNewTasks - hello")
 
 	newTasks, err := s.storage.GetNewTasks()
@@ -103,17 +102,16 @@ func (s Service) getNewTasks() error {
 	}
 
 	log.Println("Service.getNewTasks - bye")
-	duration := time.Since(startTimer)
-	fmt.Printf("Servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
+
 	return nil
 }
 
-func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
-	err := s.storage.BulkAddTaskResults(results)
-	if err != nil {
-		log.Println(err)
-	}
-}
+//func (s Service) bulkAddTaskResults(results []entity.ResultEntity) {
+//	err := s.storage.BulkAddTaskResults(results)
+//	if err != nil {
+//		log.Println(err)
+//	}
+//}
 
 //func (s Service) schedule(newTasks []entity.TaskEntity) {
 //	var results []entity.ResultEntity
@@ -131,5 +129,5 @@ func (s Service) bulkCreateTaskResults(results []entity.ResultEntity) {
 //		// results to ch buffer - fan-in
 //	}
 //
-//	s.bulkCreateTaskResults(results)
+//	s.bulkAddTaskResults(results)
 //}
