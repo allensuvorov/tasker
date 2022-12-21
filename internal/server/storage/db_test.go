@@ -81,7 +81,7 @@ func TestTaskStorage_CreateTask_RealDB(t *testing.T) {
 	}
 }
 
-func TestTaskStorage_Create10Tasks_RealDB(t *testing.T) {
+func TestTaskStorage_Create30Tasks_RealDB(t *testing.T) {
 
 	ts := NewTaskStorage()
 
@@ -115,7 +115,7 @@ func TestTaskStorage_Create10Tasks_RealDB(t *testing.T) {
 				DB: tt.fields.DB,
 			}
 
-			for i := 0; i < 10; i++ {
+			for i := 0; i < 30; i++ {
 				tt.args.te.ID = "testtask" + fmt.Sprint(i)
 				if err := ts.CreateTask(tt.args.te); (err != nil) != tt.wantErr {
 					t.Errorf("CreateTask() error = %v, wantErr %v", err, tt.wantErr)

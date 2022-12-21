@@ -139,6 +139,8 @@ func (s *Storage) BulkAddTaskResultsViaCh(resultCh chan entity.ResultEntity) err
 
 loop:
 	for {
+		log.Println("Storage.flushing resultCh - len is ", len(resultCh))
+
 		select {
 		case r := <-resultCh:
 			if _, err = stmt.Exec(r.TaskID, r.TaskStatus, r.ResponseHttpStatusCode, r.ResponseHeaders, r.ResponseBodyLength); err != nil {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
+	"runtime"
 	"time"
 )
 
@@ -29,6 +30,38 @@ func NewService(s Storage, r Request) Service {
 	}
 }
 
+var taskCh = make(chan entity.TaskEntity)
+
+var resultCh = make(chan entity.ResultEntity, 5)
+
+func (s Service) createWorkers(n int) {
+	for i := 0; i < n; i++ {
+		go func() {
+			for task := range taskCh {
+				s.makeRequest(task)
+			}
+		}()
+	}
+}
+func (s Service) makeRequest(task entity.TaskEntity) {
+	log.Println("Service.makeRequest - Hello")
+
+	result, err := s.request.Request(task)
+	if err != nil {
+		log.Println(err)
+	}
+	select {
+	case resultCh <- result:
+		log.Println("taskCh len is ", len(taskCh))
+		log.Println("NumGoroutine len is ", runtime.NumGoroutine())
+	default:
+		s.flushToDB()
+		resultCh <- result
+	}
+
+	log.Println("Service.makeRequest - Bye")
+}
+
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	log.Println("Service.StartGettingNewTasks - hello")
 	startTimer := time.Now()
@@ -43,6 +76,12 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 		}
 
 		time.Sleep(1 * timeInterval)
+		log.Println("resultCh - len is ", len(resultCh))
+
+		if len(resultCh) > 0 {
+			s.flushToDB()
+		}
+
 		duration := time.Since(startTimer)
 		fmt.Printf("Servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 	}
@@ -50,47 +89,23 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 	return nil
 }
 
-var taskCh = make(chan entity.TaskEntity)
-var resultCh = make(chan entity.ResultEntity, 5)
-
-// TODO need channel here
-//var results []entity.ResultEntity
-
-func (s Service) createWorkers(n int) {
-	for i := 0; i < n; i++ {
-		go func() {
-			for task := range taskCh {
-				s.makeRequest(task)
-			}
-		}()
-	}
-}
-
-func (s Service) makeRequest(task entity.TaskEntity) {
-	log.Println("Service.makeRequest - Hello")
-
-	result, err := s.request.Request(task)
+func (s Service) flushToDB() {
+	log.Println("service.flushToDB - flushing resultCh - len is ", len(resultCh))
+	err := s.storage.BulkAddTaskResultsViaCh(resultCh)
 	if err != nil {
 		log.Println(err)
 	}
-	select {
-	case resultCh <- result:
-	default:
-		s.storage.BulkAddTaskResultsViaCh(resultCh)
-	}
-
-	//results = append(results, result)
-	//if len(results) == 1000 {
-	//	s.bulkAddTaskResults(results)
-	//	results = nil
-	//}
-	log.Println("Service.makeRequest - Bye")
 }
 
 func (s Service) getNewTasks() error {
 	log.Println("Service.getNewTasks - hello")
-
 	newTasks, err := s.storage.GetNewTasks()
+
+	//maxLen := 1000
+	//if len(newTasks) < maxLen {
+	//	resultCh = make(chan entity.ResultEntity, len(newTasks))
+	//}
+
 	if err != nil {
 		return err
 	}
@@ -105,6 +120,9 @@ func (s Service) getNewTasks() error {
 
 	return nil
 }
+
+// TODO need channel here
+//var results []entity.ResultEntity
 
 //func (s Service) bulkAddTaskResults(results []entity.ResultEntity) {
 //	err := s.storage.BulkAddTaskResults(results)
