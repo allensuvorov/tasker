@@ -10,7 +10,6 @@ import (
 
 type Storage interface {
 	GetNewTasks() ([]entity.TaskEntity, error)
-	BulkAddTaskResults(results []entity.ResultEntity) error
 	BulkAddTaskResultsViaCh(resultCh chan entity.ResultEntity) error
 }
 
@@ -120,32 +119,3 @@ func (s Service) getNewTasks() error {
 
 	return nil
 }
-
-// TODO need channel here
-//var results []entity.ResultEntity
-
-//func (s Service) bulkAddTaskResults(results []entity.ResultEntity) {
-//	err := s.storage.BulkAddTaskResults(results)
-//	if err != nil {
-//		log.Println(err)
-//	}
-//}
-
-//func (s Service) schedule(newTasks []entity.TaskEntity) {
-//	var results []entity.ResultEntity
-//	// TODO go func add - fan-out
-//	// TODO for very long lists such as 10^10, let's process lists concurrently
-//
-//	for _, task := range newTasks {
-//
-//		// go func
-//		result, err := s.request.Request(task)
-//		if err != nil {
-//			log.Println(err)
-//		}
-//		results = append(results, result)
-//		// results to ch buffer - fan-in
-//	}
-//
-//	s.bulkAddTaskResults(results)
-//}

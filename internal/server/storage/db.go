@@ -24,6 +24,8 @@ func NewTaskStorage() *TaskStorage {
 		panic(err)
 	}
 
+	db.SetMaxOpenConns(5)
+
 	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS tasks(
 	TaskID serial PRIMARY KEY,
 	task_id text,

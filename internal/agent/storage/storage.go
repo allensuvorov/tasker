@@ -21,6 +21,7 @@ func NewStorage() *Storage {
 	if err != nil {
 		panic(err)
 	}
+	db.SetMaxOpenConns(10)
 	return &Storage{
 		DB: db,
 	}

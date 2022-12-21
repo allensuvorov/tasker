@@ -10,6 +10,7 @@ Code development progress:
 - increment1 - Project diagram, code with interfaces.
 - increment2 - Handlers with saving to DB and tests.
 - increment3 - Task agents with goroutines and tests.
+- Add Limit db connection pool
 - increment4 - Docker, and other cool stuff.
 
 Plan:
