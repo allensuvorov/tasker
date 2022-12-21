@@ -1,8 +1,9 @@
 package service
 
 import (
-	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
+
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 )
 
 type TaskStorage interface {

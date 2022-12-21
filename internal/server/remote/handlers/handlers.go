@@ -4,9 +4,10 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"github.com/go-chi/chi/v5"
 	"log"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	localError "github.com/allensuvorov/tasker/internal/server/domain/error"

@@ -1,9 +1,10 @@
 package remote
 
 import (
-	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
 	"net/http"
+
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 )
 
 type Request struct{}

@@ -2,10 +2,10 @@ package service
 
 import (
 	"fmt"
-	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	"log"
-	"runtime"
 	"time"
+
+	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 )
 
 type Storage interface {
@@ -30,39 +30,10 @@ func NewService(s Storage, r Request) Service {
 }
 
 var taskCh = make(chan entity.TaskEntity)
-
 var resultCh = make(chan entity.ResultEntity, 5)
 
-func (s Service) createWorkers(n int) {
-	for i := 0; i < n; i++ {
-		go func() {
-			for task := range taskCh {
-				s.makeRequest(task)
-			}
-		}()
-	}
-}
-func (s Service) makeRequest(task entity.TaskEntity) {
-	log.Println("Service.makeRequest - Hello")
-
-	result, err := s.request.Request(task)
-	if err != nil {
-		log.Println(err)
-	}
-	select {
-	case resultCh <- result:
-		log.Println("taskCh len is ", len(taskCh))
-		log.Println("NumGoroutine len is ", runtime.NumGoroutine())
-	default:
-		s.flushToDB()
-		resultCh <- result
-	}
-
-	log.Println("Service.makeRequest - Bye")
-}
-
 func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
-	log.Println("Service.StartGettingNewTasks - hello")
+	log.Println("service.StartGettingNewTasks - hello")
 	startTimer := time.Now()
 
 	s.createWorkers(1000)
@@ -75,19 +46,44 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 		}
 
 		time.Sleep(1 * timeInterval)
-		log.Println("resultCh - len is ", len(resultCh))
+		log.Println("service.StartGettingNewTasks - resultCh - len is ", len(resultCh))
 
 		if len(resultCh) > 0 {
 			s.flushToDB()
 		}
 
 		duration := time.Since(startTimer)
-		fmt.Printf("Servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
+		fmt.Printf("servis.getNewTasks - Execution Time ms %d\n", duration.Milliseconds())
 	}
-	log.Println("Service.StartGettingNewTasks - bye")
+	log.Println("service.StartGettingNewTasks - bye")
 	return nil
 }
+func (s Service) createWorkers(n int) {
+	for i := 0; i < n; i++ {
+		go func() {
+			for task := range taskCh {
+				s.makeRequest(task)
+			}
+		}()
+	}
+}
+func (s Service) makeRequest(task entity.TaskEntity) {
+	log.Println("service.makeRequest - Hello")
 
+	result, err := s.request.Request(task)
+	if err != nil {
+		log.Println(err)
+	}
+	select {
+	case resultCh <- result:
+		log.Println("service.makeRequest - taskCh len is ", len(taskCh))
+	default:
+		s.flushToDB()
+		resultCh <- result
+	}
+
+	log.Println("service.makeRequest - Bye")
+}
 func (s Service) flushToDB() {
 	log.Println("service.flushToDB - flushing resultCh - len is ", len(resultCh))
 	err := s.storage.BulkAddTaskResultsViaCh(resultCh)
@@ -95,15 +91,9 @@ func (s Service) flushToDB() {
 		log.Println(err)
 	}
 }
-
 func (s Service) getNewTasks() error {
-	log.Println("Service.getNewTasks - hello")
+	log.Println("service.getNewTasks - hello")
 	newTasks, err := s.storage.GetNewTasks()
-
-	//maxLen := 1000
-	//if len(newTasks) < maxLen {
-	//	resultCh = make(chan entity.ResultEntity, len(newTasks))
-	//}
 
 	if err != nil {
 		return err
@@ -115,7 +105,6 @@ func (s Service) getNewTasks() error {
 		}
 	}
 
-	log.Println("Service.getNewTasks - bye")
-
+	log.Println("service.getNewTasks - bye")
 	return nil
 }
