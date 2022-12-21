@@ -10,6 +10,7 @@ import (
 type Storage interface {
 	GetNewTasks() ([]entity.TaskEntity, error)
 	BulkAddTaskResults(results []entity.ResultEntity) error
+	BulkAddTaskResultsViaCh(resultCh chan entity.ResultEntity) error
 }
 
 type Request interface {
@@ -47,11 +48,10 @@ func (s Service) StartGettingNewTasks(timeInterval time.Duration) error {
 }
 
 var taskCh = make(chan entity.TaskEntity)
+var resultCh = make(chan entity.ResultEntity, 1000)
 
 // TODO need channel here
 var results []entity.ResultEntity
-
-// bulkCreateTaskResults(results)
 
 func (s Service) createWorkers(n uint) {
 	for i := 0; i < 1000; i++ {
@@ -68,7 +68,23 @@ func (s Service) makeRequest(task entity.TaskEntity) {
 	if err != nil {
 		log.Println(err)
 	}
-	results = append(results, result)
+	select {
+	case resultCh <- result:
+	default:
+
+	}
+	resultCh <- result
+	//select {
+	//case db.BufferCh <- v:
+	//default:
+	//	db.flushBufferToDB()
+	//}
+
+	//results = append(results, result)
+	//if len(results) == 1000 {
+	//	s.bulkCreateTaskResults(results)
+	//	results = nil
+	//}
 }
 
 func (s Service) getNewTasks() error {
