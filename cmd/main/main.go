@@ -1,12 +1,13 @@
 package main
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/allensuvorov/tasker/internal/server/remote/handlers"
 	"github.com/allensuvorov/tasker/internal/server/remote/routers"
 	"github.com/allensuvorov/tasker/internal/server/service"
 	"github.com/allensuvorov/tasker/internal/server/storage"
-	"log"
-	"net/http"
 )
 
 func main() {
