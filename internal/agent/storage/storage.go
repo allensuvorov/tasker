@@ -16,8 +16,9 @@ type Storage struct {
 }
 
 func NewStorage() *Storage {
-	db, err := sql.Open("pgx",
-		"postgres://postgres:sql@localhost:5432/postgres")
+	//db, err := sql.Open("pgx", "postgres://postgres:sql@localhost:5432/postgres") // local
+	db, err := sql.Open("pgx", "postgres://postgres:postgrespw@localhost:55001") // docker
+
 	if err != nil {
 		panic(err)
 	}

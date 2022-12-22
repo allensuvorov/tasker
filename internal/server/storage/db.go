@@ -18,8 +18,9 @@ type TaskStorage struct {
 // TODO move DB to docker
 
 func NewTaskStorage() *TaskStorage {
-	db, err := sql.Open("pgx",
-		"postgres://postgres:sql@localhost:5432/postgres")
+	//db, err := sql.Open("pgx", "postgres://postgres:sql@localhost:5432/postgres") // local
+	db, err := sql.Open("pgx", "postgres://postgres:postgrespw@localhost:55001") // docker
+
 	if err != nil {
 		panic(err)
 	}
