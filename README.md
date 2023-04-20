@@ -10,7 +10,7 @@ Two micro-services. One - receives tasks, saves to DB, returns statuses. The oth
 * [Project spec](https://github.com/allensuvorov/tasker/blob/main/docs/task_spec.pdf)
 
 
-### To test/run the app:
+### Configuration to test/run the app:
 1. First, set your postgres DB connection string (DSN) in these files:
    - location: internal/server/storage/db.go, method: NewTaskStorage()
    - location: internal/agent/storage/storage.go, method: NewStorage()
@@ -23,4 +23,3 @@ Two micro-services. One - receives tasks, saves to DB, returns statuses. The oth
    - POST request - run this test: path: internal/server/storage/db_test.go, test name: "TestTaskStorage_CreateTask_RealDB"
    - GET request - run this test: path: internal/server/storage/db_test.go, test name: "TestTaskStorage_GetTaskStatus_RealDB"
    - If you would like to start the server, run: cmd/main/agent.go
-
