@@ -1,12 +1,14 @@
 # Tasker - job scheduler
 
-Description: Write HTTP server for a service that would make http requests to 3rd-party services.
+### Project Description
+The client sends a task to the service to perform an http request to a 3rd-party services. The task is described in json format, the generated task id is returned in response and its execution starts in the background.
+
+### Project Architecture
+Two micro-services. One - receives tasks, saves to DB, returns statuses. The other - polls DB to get new tasks, concurrently runs them - makes HTTP requests to 3rd-party services and updates statuses in the DB.
 
 * [Project flowchart](https://github.com/allensuvorov/tasker/blob/main/docs/diagram_microservices.pdf)
 * [Project spec](https://github.com/allensuvorov/tasker/blob/main/docs/task_spec.pdf)
 
-### Basic algorithm.
-The client sends a task to the service to perform an http request to a 3rd-party services. The task is described in json format, the generated task id is returned in response and its execution starts in the background.
 
 ### To test/run the app:
 1. First, set your postgres DB connection string (DSN) in these files:
