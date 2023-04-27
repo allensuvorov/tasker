@@ -7,6 +7,7 @@ import (
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 
+	"github.com/allensuvorov/tasker/internal/config"
 	"github.com/allensuvorov/tasker/internal/server/domain/entity"
 	localError "github.com/allensuvorov/tasker/internal/server/domain/error"
 )
@@ -15,11 +16,8 @@ type TaskStorage struct {
 	DB *sql.DB
 }
 
-// TODO move DB to docker
-
 func NewTaskStorage() *TaskStorage {
-	//db, err := sql.Open("pgx", "postgres://postgres:sql@localhost:5432/postgres") // local
-	db, err := sql.Open("pgx", "postgres://postgres:postgrespw@localhost:55001") // docker
+	db, err := sql.Open("pgx", config.DSN)
 
 	if err != nil {
 		panic(err)
