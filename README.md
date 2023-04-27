@@ -11,7 +11,10 @@ Two microservices. First microservice receives tasks, saves them to DB, returns 
 
 
 ### Configuration
-Set your postgres DB connection string (DSN) in these files:
+Set your postgres Database connection string / Data Source Name (DSN) in local env:
+	$ export DATABASE_DSN=<add DSN here>
+
+these files:
    - location: internal/server/storage/db.go, method: NewTaskStorage()
    - location: internal/agent/storage/storage.go, method: NewStorage()
 

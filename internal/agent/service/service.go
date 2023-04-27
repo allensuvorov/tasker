@@ -29,6 +29,7 @@ func NewService(s Storage, r Request) Service {
 	}
 }
 
+// TODO move away with these global variables
 var taskCh = make(chan entity.TaskEntity)
 var resultCh = make(chan entity.ResultEntity, 5)
 
